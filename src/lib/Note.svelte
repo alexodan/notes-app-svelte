@@ -1,40 +1,48 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
+  import EditNodeModal from './EditNodeModal.svelte'
+  import type { INote } from '../models/INote'
 
-  export let id: number
-  export let title: string
-  export let content: string
-  export let date: string
-  export let isFavorite: boolean
-  export let tags: string[]
+  export let note: INote
+
+  let showModal = false
 
   const dispatch = createEventDispatcher()
 
   const toggleFav = (e: Event) => {
     e.stopPropagation()
-    dispatch('toggleFavorite', id)
+    dispatch('toggleFavorite', note.id)
   }
+
+  const toggleModal = () => (showModal = !showModal)
 </script>
 
-<div class="note" on:click={toggleFav}>
+<div class="note" on:click={toggleModal}>
   <div class="top">
-    <h2>{title}</h2>
-    <p>{content.length > 50 ? content.substr(0, 50) + '...' : content}</p>
+    <h2>{note.title}</h2>
+    <p>
+      {note.content.length > 50
+        ? note.content.substr(0, 50) + '...'
+        : note.content}
+    </p>
   </div>
   <div class="bottom">
     <div class="note-tags">
-      {#each tags as tag}
+      {#each note.tags as tag}
         <span class="tag">{tag}</span>
       {/each}
     </div>
     <div class="note-footer">
-      <span>{date}</span>
-      <span on:click={toggleFav} class={`star ${isFavorite ? 'fav' : ''}`}
-        >{isFavorite ? '★' : '☆'}</span
+      <span>{note.date}</span>
+      <span on:click={toggleFav} class={`star ${note.isFavorite ? 'fav' : ''}`}
+        >{note.isFavorite ? '★' : '☆'}</span
       >
     </div>
   </div>
 </div>
+{#if showModal}
+  <EditNodeModal {note} />
+{/if}
 
 <style>
   .note {

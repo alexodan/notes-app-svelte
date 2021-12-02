@@ -29,7 +29,7 @@
   <div class="notes">
     <AddNewNote />
     {#each notes as note}
-      <Note {...note} />
+      <Note {note} />
     {/each}
   </div>
 </main>

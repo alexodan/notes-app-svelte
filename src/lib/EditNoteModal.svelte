@@ -1,4 +1,4 @@
-<script lang="ts">
+<script script lang="ts">
   import Modal from '@/lib/Modal.svelte'
   import type { INote } from 'src/models/INote'
   import { createEventDispatcher } from 'svelte'

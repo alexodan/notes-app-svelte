@@ -1,11 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import EditNodeModal from './EditNodeModal.svelte'
   import type { INote } from '../models/INote'
 
   export let note: INote
-
-  let showModal = false
 
   const dispatch = createEventDispatcher()
 
@@ -13,11 +10,9 @@
     e.stopPropagation()
     dispatch('toggleFavorite', note.id)
   }
-
-  const toggleModal = () => (showModal = !showModal)
 </script>
 
-<div class="note" on:click={toggleModal}>
+<div class="note" on:click>
   <div class="top">
     <h2>{note.title}</h2>
     <p>
@@ -40,9 +35,6 @@
     </div>
   </div>
 </div>
-{#if showModal}
-  <EditNodeModal {note} />
-{/if}
 
 <style>
   .note {

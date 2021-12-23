@@ -5,6 +5,9 @@
 
   export let note: INote
   let textarea: HTMLElement
+  let tagString = note.tags && note.tags.length ? note.tags.join(',') : ''
+
+  $: canSave = Boolean(note.title && note.content)
 
   const onInput = () => {
     if (textarea) {
@@ -14,6 +17,25 @@
   }
 
   const dispatch = createEventDispatcher()
+
+  const saveNote = () => {
+    if (!canSave) return
+    const newNote = {
+      id: note.id,
+      title: note.title,
+      content: note.content,
+      date: '',
+      isFavorite: false,
+      tags: tagString
+        .replace(/\s/g, '')
+        .split(',')
+        .filter(item => item),
+    }
+    if (!newNote.id) {
+      newNote.id = Math.random() * 100
+    }
+    dispatch('save', newNote)
+  }
 </script>
 
 <Modal on:closeModal={() => dispatch('close')}>
@@ -23,7 +45,7 @@
     <input bind:value={note.title} id="note-title" class="input" type="text" />
 
     <label class="label" for="note-tags">Tags:</label>
-    <!-- <input bind:value={tagString}  id="note-tags" class="input" type="text" /> -->
+    <input bind:value={tagString} id="note-tags" class="input" type="text" />
 
     <label class="label" for="note-content">Content:</label>
     <textarea
@@ -39,8 +61,31 @@
       <div class="label">Last Updated:</div>
       <div class="text">{note.date}</div>
     {/if}
-  </div></Modal
->
+  </div>
+  <div slot="footer" class="modal-footer">
+    <div class="delete-wrapper">
+      {#if note.id}
+        <button
+          class="button delete"
+          on:click|stopPropagation={() => dispatch('delete', note.id)}
+        >
+          Delete
+        </button>
+      {/if}
+    </div>
+    <div class="buttons-wrapper">
+      <button
+        class="button save {!canSave ? 'disabled' : ''}"
+        on:click|stopPropagation={saveNote}
+      >
+        Save
+      </button>
+      <button class="button" on:click|stopPropagation={() => dispatch('close')}>
+        Cancel
+      </button>
+    </div>
+  </div>
+</Modal>
 
 <style>
   .modal-body {
@@ -86,11 +131,11 @@
   .button:active {
     background-color: #b9b7b7;
   }
-  .button .save {
+  .button.save {
     background-color: #1dbd73;
     color: #fff;
   }
-  .button .save:active {
+  .button.save:active {
     background-color: #1a8e56;
   }
   .disabled {

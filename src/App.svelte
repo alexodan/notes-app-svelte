@@ -24,22 +24,27 @@
     },
   ]
 
-  let showModal = false
+  let showEditModal = false
   let noteToEdit: INote
 
-  const openEditNote = (note: INote) => {
-    showModal = true
+  const openEditNote = (note?: INote) => {
+    showEditModal = true
     noteToEdit = note
   }
 
   const closeEditModal = () => {
-    showModal = false
+    showEditModal = false
     noteToEdit = null
   }
 
   const saveNote = (event: CustomEvent) => {
-    const editedNote = event.detail as INote
-    notes = notes.map(n => (n.id === editedNote.id ? editedNote : n))
+    const note = event.detail as INote
+    const isEditedNote = notes.find(n => n.id === note.id)
+    if (isEditedNote) {
+      notes = notes.map(n => (n.id === note.id ? note : n))
+    } else {
+      notes = [...notes, note]
+    }
   }
 
   const deleteNote = (event: CustomEvent) => {
@@ -59,7 +64,7 @@
 
 <main>
   <div class="notes">
-    <AddNewNote />
+    <AddNewNote on:click={openEditNote} />
     {#each notes as note}
       <Note
         {note}
@@ -67,7 +72,7 @@
         on:toggleFavorite={toggleFavorite}
       />
     {/each}
-    {#if showModal}
+    {#if showEditModal}
       <EditNoteModal
         note={noteToEdit}
         on:save={saveNote}

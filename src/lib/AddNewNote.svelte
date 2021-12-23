@@ -1,12 +1,4 @@
-<script lang="ts">
-  export let onAddNewNote
-
-  const addNewNote = () => {
-    // show a modal
-  }
-</script>
-
-<div class="new-note" on:click={addNewNote}>
+<div class="new-note" on:click>
   <span>+</span>
 </div>
 
